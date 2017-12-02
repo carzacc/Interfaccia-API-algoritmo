@@ -22,7 +22,6 @@ var avviaprogramma = function () {
   if ((<HTMLInputElement>document.getElementById('giornata6')).checked) giornata = 6;
   if ((<HTMLInputElement>document.getElementById('giornata5')).checked) giornata = 5;
   if ((<HTMLInputElement>document.getElementById('giornata4')).checked) giornata = 4;
-  prelevadati(giornata);
   let indicatorezona = document.getElementById('indicatorezona');
   indicatorezona.style.display = 'none';
   let divrisultati = document.getElementById('Risultati');
@@ -34,18 +33,35 @@ var avviaprogramma = function () {
   let titolorisultati = risultati.appendChild(document.createElement('h1'));
   titolorisultati.appendChild(document.createTextNode("RISULTATI:"));
   let accapo = risultati.appendChild(document.createElement('br'));
+  let tastoreset;
+  (function creatastoreset() {
+    tastoreset = document.createElement('button');
+    divtasti.appendChild(tastoreset);
+    let testotasto = document.createTextNode("Resetta tutto");
+    tastoreset.appendChild(testotasto);
+  }).call(this);
+  let lista = risultati.appendChild(failista(prelevadati(giornata)));
+  console.log("finita funzione");
+  tastoreset.onclick = function () {
+    let parent = (<HTMLInputElement>document.getElementById("Risultati"));
+    parent.removeChild(lista);
+    parent.removeChild(titolorisultati);
+    divtasti.removeChild(tastoreset);
+    parent.removeChild(accapo);
+    indicatorezona.style.display = 'visible';
+  }
 }
 var sveglia = function ()  {
   $.get("http://algorest.carzacc.info", function(a)  {
     console.log("Svegliato sito");
   });
 }
-var prelevadati = function(g)  {
-  $.getJSON( "http://algorest.carzacc.info/?g="+g, function( algoritmo ) {
-    console.log(algoritmo);
-     let lista = risultati.appendChild(failista(algoritmo));
-     };
-  });
+function prelevadati (g)  {
+  let dati;
+    $.getJSON( "http://algorest.carzacc.info/?g="+g, function( algoritmo ) {
+      console.log(algoritmo);
+    });
+  return dati;
 }
 
 var tipoclassifica = function() {
@@ -66,21 +82,7 @@ var failista = function (squadre) {
     if (tipo == "Trad") punti[i] = squadre[i].Tradizionale;
     if (tipo == "Somma") punti[i] = squadre[i].Somma;
   }
-  let tastoreset;
-  (function creatastoreset() {
-    tastoreset = document.createElement('button');
-    divtasti.appendChild(tastoreset);
-    let testotasto = document.createTextNode("Resetta tutto");
-    tastoreset.appendChild(testotasto);
-  }).call(this);
-  console.log("finita funzione");
-  tastoreset.onclick = function () {
-    let parent = (<HTMLInputElement>document.getElementById("Risultati"));
-    parent.removeChild(lista);
-    parent.removeChild(titolorisultati);
-    divtasti.removeChild(tastoreset);
-    parent.removeChild(accapo);
-    indicatorezona.style.display = 'visible';
+
   let lista = document.createElement("ul");
   for (var i = 0; i < punti.length; i++) {
     let elemento = document.createElement('li');
